@@ -6,9 +6,8 @@
 ### Install
 
 - `go build -ldflags "-w -s -H=windowsgui"`
-- Set icon with Reasource Hacker ([https://www.angusj.com/resourcehacker/](https://www.angusj.com/resourcehacker/))
-- Put somewhere the `stats.exe`
 - Create a shortcut to `stats.exe` and name it `Stats`
+- Set icon for the shortcut
 - You can put the shortcut in:
     - Desktop
     - `C:\ProgramData\Microsoft\Windows\Start Menu\Programs`
