@@ -89,7 +89,7 @@ func (s *Stats) Load() {
 			s.Stats[len(s.Stats)-1].Values[i] = *(*int32)(unsafe.Pointer(uintptr(unsafe.Pointer(&data[0])) + uintptr(i*4)))
 		}
 
-		s.CheckLastDayRecorded()
+		s.CheckLastDayRecorded(len(s.Stats) - 1)
 
 		last_time := false
 		streak := int32(0)
@@ -115,9 +115,20 @@ func (s *Stats) Load() {
 			}
 		}
 	}
+
+	day_now := time.Now().Local().YearDay()
+	for i := 2025; i < time.Now().Local().Year(); i++ {
+		if i%4 == 0 && (i%100 != 0 || i%400 == 0) {
+			day_now += 366
+		} else {
+			day_now += 365
+		}
+	}
+	s.LastDayRecorded = day_now
+	s.Save()
 }
 
-func (s *Stats) CheckLastDayRecorded() {
+func (s *Stats) CheckLastDayRecorded(i int) {
 	// Calculate the number of days since 2025
 	day_now := time.Now().Local().YearDay()
 	for i := 2025; i < time.Now().Local().Year(); i++ {
@@ -132,15 +143,15 @@ func (s *Stats) CheckLastDayRecorded() {
 		return
 	}
 
+	ldr := s.LastDayRecorded
+
 	// If the current day is greater than the last recorded day, update stats
-	for day_now > s.LastDayRecorded {
-		for i := range s.Stats {
-			s.Stats[i].Values = append(s.Stats[i].Values, 0)
-			if len(s.Stats[i].Values) == 3 && s.Stats[i].Values[0] == 0 {
-				s.Stats[i].Values = s.Stats[i].Values[1:]
-			}
+	for day_now > ldr {
+		s.Stats[i].Values = append(s.Stats[i].Values, 0)
+		if len(s.Stats[i].Values) == 3 && s.Stats[i].Values[0] == 0 {
+			s.Stats[i].Values = s.Stats[i].Values[1:]
 		}
-		s.LastDayRecorded++
+		ldr++
 	}
 
 	s.Save()
