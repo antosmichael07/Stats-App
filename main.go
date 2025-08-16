@@ -131,16 +131,19 @@ func main() {
 				break
 			}
 		}
-		total := fmt.Sprintf("Total: %d", stats.Stats[selected].Total+stats.Get(selected))
 		longest_streak := fmt.Sprintf("Longest streak: %d", max(stats.Stats[selected].LongestStreak, current_streak_val))
 		current_streak := fmt.Sprintf("Current streak: %d", current_streak_val)
+		total := fmt.Sprintf("Total: %d", stats.Stats[selected].Total+stats.Get(selected))
 		max_text := fmt.Sprintf("Max: %d", max(stats.Stats[selected].Max, stats.Get(selected)))
+		average := fmt.Sprintf("Average: %.2f", float64(stats.Stats[selected].Total+stats.Get(selected))/float64(len(stats.Stats[selected].Values)))
 
-		info_offset := (graph_width - rl.MeasureText(total, 20) - rl.MeasureText(longest_streak, 20) - rl.MeasureText(current_streak, 20) - rl.MeasureText(max_text, 20)) / 5
-		rl.DrawText(total, 502+info_offset, height-142, 20, rl.White)
-		rl.DrawText(longest_streak, 502+info_offset*2+rl.MeasureText(total, 20), height-142, 20, rl.White)
-		rl.DrawText(current_streak, 502+info_offset*3+rl.MeasureText(total, 20)+rl.MeasureText(longest_streak, 20), height-142, 20, rl.White)
-		rl.DrawText(max_text, 502+info_offset*4+rl.MeasureText(total, 20)+rl.MeasureText(longest_streak, 20)+rl.MeasureText(current_streak, 20), height-142, 20, rl.White)
+		down_info_offset := (graph_width - rl.MeasureText(longest_streak, 20) - rl.MeasureText(current_streak, 20)) / 3
+		rl.DrawText(longest_streak, 502+down_info_offset, height-127, 20, rl.White)
+		rl.DrawText(current_streak, 502+down_info_offset*2+rl.MeasureText(longest_streak, 20), height-127, 20, rl.White)
+		up_info_offset := (graph_width - rl.MeasureText(total, 20) - rl.MeasureText(max_text, 20) - rl.MeasureText(average, 20)) / 4
+		rl.DrawText(total, 502+up_info_offset, height-157, 20, rl.White)
+		rl.DrawText(max_text, 502+up_info_offset*2+rl.MeasureText(total, 20), height-157, 20, rl.White)
+		rl.DrawText(average, 502+up_info_offset*3+rl.MeasureText(total, 20)+rl.MeasureText(max_text, 20), height-157, 20, rl.White)
 
 		// Draw graph
 		offset := (graph_width - 100) / (min(max_graph_points, int32(len(stats.Stats[selected].Values))) - 1)
